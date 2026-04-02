@@ -5,6 +5,7 @@ import dotenv from "dotenv"
 dotenv.config()
 
 const app = express()
+app.use(express.json())
 app.use(cors({
     origin:process.env.FRONTEND_URL,
     methods:["GET","POST","PUT","DELETE","OPTIONS"],
@@ -12,8 +13,8 @@ app.use(cors({
     credentials:true
 }))
 
-app.use("/user-api",userRouter)
+app.use("/user-api/v1",userRouter)
 
-app.listen(6000,()=>{
-    console.log("server is runnning on port 6000")
+app.listen(4500,()=>{
+    console.log("server is runnning on port 4500")
 })
