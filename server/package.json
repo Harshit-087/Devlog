@@ -6,7 +6,8 @@
   "main": "app.js",
   "scripts": {
     "dev": "node --watch app.js",
-    "start":"node app.js"
+    "start":"node app.js",
+    "build": "echo 'No build needed for JS server'"
     
   },
   "keywords": [],
