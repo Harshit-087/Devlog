@@ -7,6 +7,8 @@ import aiRouter from "./routes/ai.router.js"
 dotenv.config()
 
 const app = express()
+ const PORT = process.env.PORT || 4500;
+
 app.use(express.json())
 app.use(cors({
     origin:process.env.FRONTEND_URL,
@@ -19,6 +21,6 @@ app.use("/user-api/v1",userRouter)
 app.use("/journal-api/v1",journalRouter)
 app.use("/ai-api/v1",aiRouter)
 
-app.listen(4500,()=>{
+app.listen(PORT,()=>{
     console.log("server is runnning on port 4500")
 })
