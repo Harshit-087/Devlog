@@ -2,6 +2,8 @@ import express from "express"
 import cors from "cors"
 import userRouter from "./routes/user.router.js"
 import dotenv from "dotenv"
+import journalRouter from "./routes/journal.router.js"
+import aiRouter from "./routes/ai.router.js"
 dotenv.config()
 
 const app = express()
@@ -14,6 +16,8 @@ app.use(cors({
 }))
 
 app.use("/user-api/v1",userRouter)
+app.use("/journal-api/v1",journalRouter)
+app.use("/ai-api/v1",aiRouter)
 
 app.listen(4500,()=>{
     console.log("server is runnning on port 4500")

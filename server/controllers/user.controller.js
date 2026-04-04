@@ -1,4 +1,4 @@
-import pool from "../db/connection.js"
+import pool from "../config/connection.js"
 import {GenerateToken} from "../auth/auth.js"
 
 const getTokenConfig={
@@ -23,7 +23,7 @@ export  const SignupUser =async(req,res)=>{
 }
 
 export  const SigninUser =async(req,res)=>{
-     console.log("request reached",req.body)
+    //  console.log("request reached",req.body)
     const {email,password} = req.body;
     const userExist = await pool.query("SELECT * FROM users WHERE email =$1",[email]);
     // console.log(userExist)

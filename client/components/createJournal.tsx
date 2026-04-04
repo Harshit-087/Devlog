@@ -4,18 +4,25 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, X } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { journalQuery } from "@/app/api/journalQuery";
+import { useSelector } from "react-redux";
+import { initialState } from "@/store/router";
 
 export default function CreateJournal() {
   const [openEditor, setOpenEditor] = useState(false);
+// console.log("redux user:", useSelector((state:{user:initialState}) => state.user))
+  const {id} = useSelector((state:{user:initialState})=>state.user)
+
+   const queryClient = useQueryClient()
 
   const createJournalMutation = useMutation({
-    mutationFn:async(payload:{title:string,content:string})=>{
-        return await journalQuery.createJournal(payload)
+    mutationFn:async({payload,id}:{payload:{title:string,content:string},id:string})=>{
+        return await journalQuery.createJournal(payload,id)
     },
     onSuccess:(res)=>{
         console.log("successfully created journal",res.data)
+        queryClient.invalidateQueries({queryKey:["dashboard-analysis",id]})
     },
     onError:(error)=>{
         console.log("error in creating the journal",error.message)
@@ -27,12 +34,13 @@ export default function CreateJournal() {
 
     const title = (e.currentTarget as HTMLFormElement).topic as HTMLInputElement;
     const content =(e.currentTarget as HTMLFormElement).content as HTMLTextAreaElement
+    if(!title.value.trim() || !content.value.trim()) return ;
  
     const payload={
         title:title.value,
         content:content.value
     }
-    createJournalMutation.mutate(payload);
+    createJournalMutation.mutate({payload,id});
   }
 
   return (
@@ -88,7 +96,9 @@ export default function CreateJournal() {
                   />
 
                   <div className="flex justify-end">
-                    <button type="submit" className="px-5 py-3 rounded-xl bg-white text-black font-medium hover:scale-[1.02] transition">
+                    <button type="submit" 
+                    onClick={()=>setOpenEditor(false)}
+                    className="px-5 py-3 rounded-xl bg-white text-black font-medium hover:scale-[1.02] transition">
                       Publish
                     </button>
                   </div>
