@@ -4,7 +4,7 @@ import userRouter from "./routes/user.router.js"
 import dotenv from "dotenv"
 import journalRouter from "./routes/journal.router.js"
 import aiRouter from "./routes/ai.router.js"
-dotenv.config()
+
 
 const app = express()
  const PORT = process.env.PORT || 4500;
