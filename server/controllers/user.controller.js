@@ -25,7 +25,7 @@ export  const SignupUser =async(req,res)=>{
 export  const SigninUser =async(req,res)=>{
     //  console.log("request reached",req.body)
     const {email,password} = req.body;
-    const userExist = await pool.query("SELECT * FROM users WHERE email =$1",[email]);
+    const userExist = await pool.query("SELECT * FROM users WHERE LOWER(TRIM(email)) = LOWER(TRIM($1))",[email]);
     // console.log(userExist)
     if(userExist.rows.length===0) return res.status(404).json({message:"user not found"})
     try{
