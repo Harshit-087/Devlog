@@ -26,6 +26,8 @@ export  const SigninUser =async(req,res)=>{
     //  console.log("request reached",req.body)
     const test = await pool.query("SELECT NOW()");
 console.log("DB WORKING:", test.rows);
+const allUsers = await pool.query("SELECT * FROM users");
+console.log("USERS FROM BACKEND:", allUsers.rows);
     const {email,password} = req.body;
     const userExist = await pool.query("SELECT * FROM users WHERE LOWER(TRIM(email)) = LOWER(TRIM($1))",[email]);
     console.log(userExist)
