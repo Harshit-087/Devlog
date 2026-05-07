@@ -1,5 +1,6 @@
 import { runWeeklyAnalysis,weeklyAnalysis_dashboard } from "../service/ai.services.js";
-import pool from "../config/connection.js"
+import {pool,prisma} from "../config/connection.js"
+
 
 export async function weeklyAnalysis(req, res) {
     const {id} = req.params;
@@ -9,7 +10,18 @@ export async function weeklyAnalysis(req, res) {
   const {title,summary,skills,gaps,recommendation } = result
 
   // saving to db
-  const saving_analysis = await pool.query("INSERT INTO weekly_analysis(user_id,title,summary,skills,gaps,recommendation) VALUES ($1,$2,$3,$4,$5,$6)",[id,title,summary,skills,gaps,recommendation ])
+  // 2. Saving to DB using Prisma
+        // Prisma uses object mapping, so no need for $1, $2 variables
+        const saving_analysis = await prisma.weekly_analysis.create({
+            data: {
+                user_id: id,      // Ensure the field name matches your schema.prisma
+                title,
+                summary,
+                skills,
+                gaps,
+                recommendation
+            }
+        });
   console.log("controller",result)
   res.json({ result });
 }
@@ -18,7 +30,11 @@ export async function weeklyAnalysis(req, res) {
 export const analysis_db = async(req,res)=>{
     const {id} = req.params;
     try{
-        const fetchAnalysisFromDb= await pool.query("SELECT * FROM weekly_analysis WHERE user_id=$1",[id])
+        // const fetchAnalysisFromDb= await pool.query("SELECT * FROM weekly_analysis WHERE user_id=$1",[id])
+
+       // using prisma
+       const fetchAnalysisFromDb = await prisma.weekly_analysis.findById({user_id:id});
+
         return res.status(200).json({message:"successfully fetched the analysis",data:fetchAnalysisFromDb.rows})
     }catch(error){
         return res.status(500).json({message:"internal server error",error:error.message})

@@ -1,5 +1,6 @@
 import {Pool} from "pg"
 import dotenv from "dotenv"
+import { PrismaClient } from '@prisma/client';
 dotenv.config()
 
 const pool = new Pool({
@@ -10,4 +11,13 @@ const pool = new Pool({
     port:Number(process.env.DB_PORT),
 })
 
-export default pool;
+
+// Pass the URL here from your .env   
+// When you create your database instance in your code
+const prisma = new PrismaClient({
+  datasource: {
+    url: process.env.DATABASE_URL,
+  },
+});
+
+export { prisma ,pool};

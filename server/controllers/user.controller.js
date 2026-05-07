@@ -1,4 +1,4 @@
-import pool from "../config/connection.js"
+import {prisma,pool} from "../config/connection.js"
 import {GenerateToken} from "../auth/auth.js"
 
 const getTokenConfig={
@@ -12,10 +12,24 @@ const getTokenConfig={
 export  const SignupUser =async(req,res)=>{
     
     const {name,email,password} = req.body;
-     const userExist = await pool.query("SELECT * FROM users WHERE email =$1",[email]);
+    //  const userExist = await pool.query("SELECT * FROM users WHERE email =$1",[email]);
+
+    // using prisma for find user exist
+    const userExist = await prisma.users.find({email:email});
+
      if(userExist.rows.length!==0) return res.json({message:"user already exist"}) 
     try{
-      const userCreated  =await pool.query("INSERT INTO users (name,email,password) VALUES($1,$2,$3)",[name,email,password]);
+    //   const userCreated  =await pool.query("INSERT INTO users (name,email,password) VALUES($1,$2,$3)",[name,email,password]);
+  
+
+    // creating user via prisma
+    const userCreated = await prisma.users.create({
+        data:{
+            name,
+            email,password
+        }
+    })
+
       return res.status(201).json({message:"user created !!"})
     }catch(error){
         return res.status(500).json({message:"internal server error",error:error.message})
@@ -25,7 +39,11 @@ export  const SignupUser =async(req,res)=>{
 export  const SigninUser =async(req,res)=>{
     //  console.log("request reached",req.body)
     const {email,password} = req.body;
-    const userExist = await pool.query("SELECT * FROM users WHERE email =$1",[email]);
+    // const userExist = await pool.query("SELECT * FROM users WHERE email =$1",[email]);
+
+     // using prisma for find user exist
+    const userExist = await prisma.users.find({email:email});
+
     // console.log(userExist)
     if(userExist.rows.length===0) return res.status(404).json({message:"user not found"})
     try{
@@ -45,7 +63,10 @@ export  const SigninUser =async(req,res)=>{
 export const SignoutUser = async(req,res)=>{
     const {email } = req.body;
     try{
-        const deletedUser = await pool.query("DELETE FROM users WHERE email = $1",[email])
+        // const deletedUser = await pool.query("DELETE FROM users WHERE email = $1",[email])
+
+        // deleting user via prisma
+        const deletedUser = await prisma.users.delete({email:email});
 
         res.clearCookie("token")
 

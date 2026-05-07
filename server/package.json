@@ -6,9 +6,8 @@
   "main": "app.js",
   "scripts": {
     "dev": "node --watch app.js",
-    "start":"node app.js",
+    "start": "node app.js",
     "build": "echo 'No build needed for JS server'"
-    
   },
   "keywords": [],
   "author": "",
@@ -25,5 +24,8 @@
     "langchain": "^1.3.0",
     "pg": "^8.20.0",
     "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "prisma": "^7.8.0"
   }
 }
