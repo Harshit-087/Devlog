@@ -37,7 +37,7 @@ export default function SigninCard() {
             password:password.value
         } 
         signinMutation.mutate(payload)
-        window.location.href="/"
+       
     }
   return (
     <AuthLayout>
