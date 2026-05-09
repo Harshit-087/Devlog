@@ -22,6 +22,7 @@ export default function AIRecap() {
   const [ days,setDays] = useState<number>(1)
   const { id } = useSelector((state: { user: initialState }) => state.user);
 
+  // analysis
   const { data: analysis = [], isLoading, isError } = useQuery({
     queryKey: ["ai-recap", id],
     queryFn: async ({ queryKey }) => {
@@ -34,6 +35,7 @@ export default function AIRecap() {
     enabled: !!id,
   });
 
+  // summary
   const aiRecapMutation = useMutation({
     mutationFn: async ({id,days}:{id: string,days:number}) => {
       return await aiQuery.AIsummary(id,days);

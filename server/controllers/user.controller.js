@@ -1,4 +1,4 @@
-import {prisma,pool} from "../config/connection.js"
+import prisma from "../config/connection.js"
 import {GenerateToken} from "../auth/auth.js"
 
 const getTokenConfig={
@@ -15,9 +15,9 @@ export  const SignupUser =async(req,res)=>{
     //  const userExist = await pool.query("SELECT * FROM users WHERE email =$1",[email]);
 
     // using prisma for find user exist
-    const userExist = await prisma.users.find({email:email});
+    const userExist = await prisma.users.findUnique({email:email});
 
-     if(userExist.rows.length!==0) return res.json({message:"user already exist"}) 
+     if(userExist) return res.json({message:"user already exist"}) 
     try{
     //   const userCreated  =await pool.query("INSERT INTO users (name,email,password) VALUES($1,$2,$3)",[name,email,password]);
   
@@ -38,19 +38,23 @@ export  const SignupUser =async(req,res)=>{
 
 export  const SigninUser =async(req,res)=>{
     //  console.log("request reached",req.body)
-    const test = await pool.query("SELECT NOW()");
-console.log("DB WORKING:", test.rows);
-const allUsers = await pool.query("SELECT * FROM users");
-console.log("USERS FROM BACKEND:", allUsers.rows);
+//     const test = await pool.query("SELECT NOW()");
+// console.log("DB WORKING:", test.rows);
+// const allUsers = await pool.query("SELECT * FROM users");
+// console.log("USERS FROM BACKEND:", allUsers.rows);
     const {email,password} = req.body;
 
     // const userExist = await pool.query("SELECT * FROM users WHERE email =$1",[email]);
 
      // using prisma for find user exist
-    const userExist = await prisma.users.find({email:email});
+    const userExist = await prisma.users.findFirst({
+            where: {
+                email: email
+            }
+        });
 
     // console.log(userExist)
-    if(userExist.rows.length===0) return res.status(404).json({message:"user not found"})
+    if(userExist===null) return res.status(404).json({message:"user not found"})
     try{
         //generating token
         const payload={email:email,password:password}
@@ -59,7 +63,7 @@ console.log("USERS FROM BACKEND:", allUsers.rows);
         res.cookie("token",token,getTokenConfig)
 
 
-        return res.status(200).json({message:"user login successfully",token:token,data:userExist.rows})
+        return res.status(200).json({message:"user login successfully",token:token,data:userExist})
     }catch(error){
         return res.status(500).json({message:"internal server error",error:error.message})
     }

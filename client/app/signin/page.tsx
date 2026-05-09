@@ -9,10 +9,11 @@ import { signIn } from "@/store/router";
 import {LogIn} from "lucide-react"
 import AuthLayout from "@/components/authLayout";
 import Link from "next/link";
+import {useRouter} from "next/navigation"
 
 export default function SigninCard() {
     const dispatch = useDispatch();
-
+    const router = useRouter()
     const signinMutation =useMutation({
         mutationFn:async(payload:{email:string,password:string})=>{
             return await userQuery.signinUser(payload)
@@ -20,7 +21,7 @@ export default function SigninCard() {
         onSuccess:(res)=>{
             console.log("signin response",res.data)
             dispatch(signIn(res.data))
-            
+            router.push("/")
         },
         onError:(error)=>{
             console.log("error in signin",error.message)

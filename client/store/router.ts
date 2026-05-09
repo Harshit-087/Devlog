@@ -22,17 +22,17 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
    signIn:(state,action:PayloadAction<{
-    data:[{
+    data:{
       id:string,
       name:string,
     email:string
-  }],
+  },
     token:string
    }>)=>{
     state.isLogged=true,
-    state.id=action.payload.data?.[0].id,
-    state.name=action.payload.data?.[0].name,
-    state.email=action.payload.data?.[0].email,
+    state.id=action.payload.data?.id,
+    state.name=action.payload.data?.name,
+    state.email=action.payload.data?.email,
     state.token=action.payload.token
     if(typeof window !="undefined"){
       localStorage.setItem("user",JSON.stringify({
