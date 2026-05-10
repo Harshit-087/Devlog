@@ -49,17 +49,18 @@ export async function dashboard_journalAnalysis(entries){
     const prompt=`
     Analyze all the user input journal entries,
     and 
-    focus ,include the user current working area example category are: backend architecture,or frontend or devops , or sales  etc . these example are for reference purpose ,you have to find the top most frequent category user inputs top atmost 3. 
+    focus ,include the user current working area ,you have to find the top most frequent category user inputs top atmost 3. 
    
 
     progress calculate the progress by analyzing the topic which specified the most is most progressed and give a number based on the depth of the  topic is intruduced and add all the mentioned topic as a josn object the highest valued at front (descending order) 
-    -progress always a object key are the topic and the values are they score which u give .
+    -progress always a object key are the topic word full not character and the values are they score which u give .
 
     find this: 
     1.focus
     2.progress
   
     RETURN in json format
+    And make sure the progress is also in Json fromat
     {
       "focus":[],
       "progress":{}

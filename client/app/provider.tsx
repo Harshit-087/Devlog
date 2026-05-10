@@ -17,7 +17,9 @@ export default function Wrapper({
     <Provider store={store}>
       <PersistGate loading={<p>loading.......</p>} persistor={persistor}>
         <QueryClientProvider client={queryClient}>
-          {children}
+         <div className="flex flex-col h-full w-full overflow-hidden min-h-0">
+            {children}
+          </div>
         </QueryClientProvider>
       </PersistGate>
     </Provider>

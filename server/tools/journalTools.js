@@ -1,4 +1,4 @@
-import prisma from "../config/connection.js"
+import {prisma} from "../config/connection.js"
 
 export async function getLastWeekJournal(userId,days) {
 //   const query = `

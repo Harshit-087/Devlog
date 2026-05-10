@@ -26,11 +26,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full overflow-hidden  antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="h-full w-full flex flex-col bg-slate-950 overflow-hidden">
+        {/* The Wrapper/children will handle scrolling */}
         <Wrapper>{children}</Wrapper>
-        </body>
+      </body>
     </html>
   );
 }

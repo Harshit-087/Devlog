@@ -1,4 +1,4 @@
-import prisma from "../config/connection.js"
+import {prisma} from "../config/connection.js"
 import {GenerateToken} from "../auth/auth.js"
 
 const getTokenConfig={

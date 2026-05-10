@@ -23,17 +23,20 @@ export default function AIRecap() {
   const { id } = useSelector((state: { user: initialState }) => state.user);
 
   // analysis
-  const { data: analysis = [], isLoading, isError } = useQuery({
+  const { data: analysis = [], isLoading, isError } = useQuery<Analysis[]>({
     queryKey: ["ai-recap", id],
     queryFn: async ({ queryKey }) => {
       const [_, id] = queryKey as [string, string | undefined];
-      if (!id) return [];
+      if (!id) throw new Error("No user Id found") ;
 
       const result = await aiQuery.fetchAIResponse(id);
-      return result.data.data;
+      console.log("fetched analysis from backend",result.data.data)
+      return result.data.data as Analysis[];
     },
     enabled: !!id,
   });
+
+
 
   // summary
   const aiRecapMutation = useMutation({
@@ -47,13 +50,18 @@ export default function AIRecap() {
     },
   });
 
+  if(aiRecapMutation.isPending) return <p> generating analysis ....</p>
+
+  
 
   return (
-    <motion.div
-  initial={{ opacity: 0 }}
-  animate={{ opacity: 1 }}
-  className="space-y-4"
->
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    // h-full: Uses the space provided by Wrapper
+    // overflow-y-auto: Creates the internal scrollbar
+     className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4"
+  >
   <button
     onClick={() => aiRecapMutation.mutate({id,days})}
     className="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:opacity-90 text-white shadow-lg"
@@ -91,6 +99,7 @@ export default function AIRecap() {
       key={item.id}
       whileHover={{ scale: 1.01 }}
       transition={{ duration: 0.2 }}
+      className="w-full flex-none"
     >
       <details className="group">
         <summary className="list-none cursor-pointer">
