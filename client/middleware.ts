@@ -1,27 +1,34 @@
-import {jwtVerify } from "jose"
-import {NextResponse} from "next/server"
-import type {NextRequest} from "next/server"
+import { jwtVerify } from "jose"
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
 
-
-
-export async function middleware(request:NextRequest){
-   
-   
+export async function middleware(request: NextRequest) {
     const token = request.cookies?.get("token")?.value
-   
     const pathname = request.nextUrl.pathname
-  
 
-    // const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-
-    if(!token){
-        
-           return NextResponse.redirect(new URL("/signin",request.url))
-       
+    // 1. If the token doesn't even exist, redirect to signin
+    if (!token) {
+        return NextResponse.redirect(new URL("/signin", request.url))
     }    
-    
-   return NextResponse.next()
+
+    try {
+        // 2. Prepare your JWT secret key
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+        
+        // 3. Verify the token is legitimate and not expired
+        await jwtVerify(token, secret);
+        
+        // If verification succeeds, let them pass
+        return NextResponse.next()
+    } catch (error) {
+        // 4. If token is invalid or expired, clear it and redirect to signin
+        console.error("JWT verification failed:", error)
+        const response = NextResponse.redirect(new URL("/signin", request.url))
+        response.cookies.delete("token") // Clean up the bad cookie
+        return response
+    }
 }
-export const config={
-    matcher:["/journal/:path*","/ai-recap/:path*","/learning-gaps/:path*"]
+
+export const config = {
+    matcher: ["/journal/:path*", "/ai-recap/:path*", "/learning-gaps/:path*"]
 }
