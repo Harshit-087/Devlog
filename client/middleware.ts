@@ -2,6 +2,8 @@ import {jwtVerify } from "jose"
 import {NextResponse} from "next/server"
 import type {NextRequest} from "next/server"
 
+
+
 export async function middleware(request:NextRequest){
    
    
@@ -13,9 +15,9 @@ export async function middleware(request:NextRequest){
     // const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
     if(!token){
-        if(pathname.startsWith("/journal")||pathname.startsWith("/ai-recap")||pathname.startsWith("/learning-gaps")){
+        
            return NextResponse.redirect(new URL("/signin",request.url))
-        }
+       
     }    
     
    return NextResponse.next()
