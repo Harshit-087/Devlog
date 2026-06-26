@@ -16,7 +16,7 @@ export  const SignupUser =async(req,res)=>{
     //  const userExist = await pool.query("SELECT * FROM users WHERE email =$1",[email]);
 
     // using prisma for find user exist
-    const userExist = await prisma.users.findUnique({email:email});
+    const userExist = await prisma.users.findUnique({where: { email: email }});
 
      if(userExist) return res.json({message:"user already exist"}) 
     try{
@@ -95,8 +95,10 @@ export const GoogleSignin=async(req,res)=>{
                 email: email
             }
         });
+
+        let finalUser = userExist;
         if(!userExist){
-        const createUser= await prisma.users.create({
+         finalUser= await prisma.users.create({
             data:{
             name,
             email,
@@ -110,7 +112,7 @@ export const GoogleSignin=async(req,res)=>{
         res.cookie("token",token,getTokenConfig)
 
         // Keep track of the final user object
-    const finalUser = userExist || createUser;
+    
 
       return res.status(200).json({message:"user login successfully",token:token,data:finalUser})
     }catch(error){
