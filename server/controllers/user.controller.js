@@ -1,6 +1,7 @@
 import {prisma} from "../config/connection.js"
 import {GenerateToken} from "../auth/auth.js"
 
+
 const getTokenConfig={
    httpOnly:true,
    sameSite:process.env.NODE_ENV==="production"?"none":"lax",
@@ -57,7 +58,7 @@ export  const SigninUser =async(req,res)=>{
     if(userExist===null) return res.status(404).json({message:"user not found"})
     try{
         //generating token
-        const payload={email:email,password:password}
+        const payload={email:email}
         const token = GenerateToken(payload)
     
         res.cookie("token",token,getTokenConfig)
@@ -83,4 +84,38 @@ export const SignoutUser = async(req,res)=>{
     }catch(error){
         return res.status(500).json({message:"internal server error",error:error.message})
     }
+}
+
+// google sigin
+export const GoogleSignin=async(req,res)=>{
+    const {name,email} = req.body;
+    try{
+        const userExist = await prisma.users.findFirst({
+            where: {
+                email: email
+            }
+        });
+        if(!userExist){
+        const createUser= await prisma.users.create({
+            data:{
+            name,
+            email,
+            password:"OAUTH_GOOGLE_USER_ACCOUNT"   // !!!!change this later ... (temporary)
+            }
+        })
+    }
+        const payload = {email:email}
+        const token = GenerateToken(payload)
+
+        res.cookie("token",token,getTokenConfig)
+
+        // Keep track of the final user object
+    const finalUser = userExist || createUser;
+
+      return res.status(200).json({message:"user login successfully",token:token,data:finalUser})
+    }catch(error){
+        console.log("error in google signin",error)
+        return res.status(500).json({message:"internal server error",error:error.message})
+    
+  }
 }

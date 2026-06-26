@@ -1,32 +1,75 @@
 "use client";
+import {useEffect} from "react"
 import {motion} from "framer-motion"
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {useDispatch} from "react-redux"
 import {useMutation} from "@tanstack/react-query"
 import { userQuery } from "../api/userQuery";
-import { signIn } from "@/store/router";
+import { logIn } from "@/store/router";
 import {LogIn} from "lucide-react"
 import AuthLayout from "@/components/authLayout";
 import Link from "next/link";
 import {useRouter} from "next/navigation"
+import {signIn,signOut,useSession} from "next-auth/react"
 
 export default function SigninCard() {
+ 
+    const {data:session} = useSession();
+    console.log(session);
+
     const dispatch = useDispatch();
     const router = useRouter()
+    
     const signinMutation =useMutation({
         mutationFn:async(payload:{email:string,password:string})=>{
             return await userQuery.signinUser(payload)
         },
         onSuccess:(res)=>{
             console.log("signin response",res.data)
-            dispatch(signIn(res.data))
+            dispatch(logIn(res.data))
             router.push("/")
         },
         onError:(error)=>{
             console.log("error in signin",error.message)
         }
  } ) 
+
+    const googleSigninMutation =useMutation({
+        mutationFn:async(payload:{email:string,name:string})=>{
+            return await userQuery.googleSignin(payload)
+        },
+       onSuccess: (res) => {
+    // res.data is the Axios response body: { message, token, data: userExist }
+    console.log("signin response", res.data);
+    
+    // Pass the actual user record (res.data.data) to your Redux action
+    const userData = res.data; 
+    
+    if (userData) {
+        dispatch(logIn(userData));
+        router.push("/");
+    } else {
+        console.error("User object is missing in backend response");
+    }
+},
+        onError:(error)=>{
+            console.log("error in signin",error.message)
+        }
+ } ) 
+
+
+useEffect(() => {
+    if (session?.user?.email && session?.user?.name) {
+      const payload = {
+        name: session.user.name,
+        email: session.user.email
+      };
+      
+      // Trigger the backend sync
+      googleSigninMutation.mutate(payload);
+    }
+  }, [session]);
 
     const handleSubmit = (e:React.FormEvent<HTMLFormElement>)=>{
         e.preventDefault();
@@ -94,6 +137,14 @@ export default function SigninCard() {
               Invalid email or password
             </p>
           )}
+           </form>
+
+           <button
+      onClick={() => signIn("google")}
+      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+    >
+      Sign In with Google
+    </button>
 
            <p className="text-center text-sm text-slate-400">
         Don't have an account?{" "}
@@ -102,9 +153,16 @@ export default function SigninCard() {
         </span>
         </Link>
       </p>
-        </form>
+       
       </Card>
     </motion.div>
     </AuthLayout>
   );
 }
+
+  {/* <button 
+          onClick={() => signOut()} 
+          className="px-4 py-2 bg-red-500 text-white rounded"
+        >
+          Sign Out
+        </button> */}

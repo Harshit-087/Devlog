@@ -21,7 +21,7 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-   signIn:(state,action:PayloadAction<{
+   logIn:(state,action:PayloadAction<{
     data:{
       id:string,
       name:string,
@@ -58,6 +58,6 @@ export const userSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const {SignOut,signIn} = userSlice.actions
+export const {SignOut,logIn} = userSlice.actions
 
 export default userSlice.reducer
