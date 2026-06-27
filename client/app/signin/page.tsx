@@ -12,14 +12,14 @@ import AuthLayout from "@/components/authLayout";
 import Link from "next/link";
 import {useRouter} from "next/navigation"
 import {signIn,signOut,useSession} from "next-auth/react"
-import {initialState} from "../../store/router"
+import type{RootState} from "../../store/store"
 
 export default function SigninCard() {
  
     const {data:session} = useSession();
     console.log(session);
   
-    const isLogged = useSelector((state:initialState)=>state.isLogged)
+    const {isLogged} = useSelector((state:RootState)=>state.user)
     
     const dispatch = useDispatch();
     const router = useRouter()
