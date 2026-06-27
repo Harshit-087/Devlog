@@ -61,13 +61,18 @@ export default function SigninCard() {
         }
  } ) 
 
+ // 1. Force navigation the instant Redux marks the user as logged in
+useEffect(() => {
+  if (isLogged) {
+    router.push("/");
+    router.refresh(); // Forces Next.js to update server components layout data
+  }
+}, [isLogged, router]);
+
 
 useEffect(() => {
 // If Redux already says they are logged in, just send them home!
-  if(isLogged){
-    router.push("/")
-    return;
-  }
+  if(isLogged)return;
 
     if (session?.user?.email && session?.user?.name) {
       const payload = {
@@ -78,7 +83,7 @@ useEffect(() => {
       // Trigger the backend sync
       googleSigninMutation.mutate(payload);
     }
-  }, [session]);
+  }, [session,isLogged]);
 
     const handleSubmit = (e:React.FormEvent<HTMLFormElement>)=>{
         e.preventDefault();
