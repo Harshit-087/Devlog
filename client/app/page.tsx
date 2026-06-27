@@ -1,34 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import {useState } from "react";
 import { Search, Bell, User ,ChevronDown,LogOut} from "lucide-react";
 import LearningGaps from "@/app/learning-gaps/page";
 import AIRecap from "@/app/ai-recap/page";
 import Journal from "@/app/journals/page";
 import Dashboard from "@/app/dashboard/page";
 import Sidebar from "@/components/sidebar";
-import {useSelector} from "react-redux"
-import { useDispatch } from "react-redux"; 
+import {useSelector, useDispatch} from "react-redux"
 import type {initialState} from "@/store/router"
 import Link from "next/link";
 import { SignOut } from "@/store/router";
 import { useMutation } from "@tanstack/react-query";
 import { userQuery } from "./api/userQuery";
+import { useSession, signOut } from "next-auth/react";
 
 export default function Home() {
   const [active, setActive] = useState("dashboard");
-  const [open,setOpen] = useState<boolean>(false);
-  const {isLogged,email} = useSelector((state:{user:initialState})=>state.user)
-  console.log("kya me login hu",isLogged)
+  const [open, setOpen] = useState<boolean>(false);
+  const { isLogged } = useSelector((state: { user: initialState }) => state.user)
+  const { data: session, status } = useSession()
 
   const dispatch = useDispatch()
 
   const signOutMutation = useMutation({
-    mutationFn:async(email:string)=>{
-      return await userQuery.signoutUser(email)
+    mutationFn: async () => {
+      return await userQuery.signoutUser()
     },
-    onSuccess:(res)=>{
-      console.log("signout user",res.data.message)
+    onSuccess: (res) => {
+      console.log("signout user", res.data.message)
+      if (status === "authenticated") {
+        signOut({ redirect: false })
+      }
+      dispatch(SignOut())
     },
     onError:(error)=>{
       console.log("error in signing out ",error.message)
@@ -93,7 +97,7 @@ export default function Home() {
                         <button
                           className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-800 transition text-left"
                           onClick={() => {
-                            dispatch( SignOut());
+                            signOutMutation.mutate()
                             console.log("logout");
                           }}
                         >

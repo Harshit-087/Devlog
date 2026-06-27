@@ -9,9 +9,9 @@ export const userQuery={
         console.log("going to backend")
     return await  axiosInstance.post("/user-api/v1/signin",payload)
   },
-  signoutUser:async(email:string)=>{
-        console.log("going to backend")
-    return await  axiosInstance.post("/user-api/v1/signout",email)
+  signoutUser: async () => {
+    console.log("going to backend")
+    return await axiosInstance.post("/user-api/v1/signout")
   },
   googleSignin:async(payload:{name:string,email:string})=>{
     return await axiosInstance.post("/user-api/v1/googleSignin",payload)

@@ -34,15 +34,6 @@ export const userSlice = createSlice({
     state.name=action.payload.data?.name,
     state.email=action.payload.data?.email,
     state.token=action.payload.token
-    if(typeof window !="undefined"){
-      localStorage.setItem("user",JSON.stringify({
-        isLogged: state.isLogged,
-        id:state.id,
-        name:state.name,
-        email:state.email,
-        token:state.token
-    }))
-    }
    },
    SignOut:(state)=>{
     state.isLogged=false,
@@ -50,9 +41,6 @@ export const userSlice = createSlice({
     state.name="",
     state.email="",
     state.token=""
-    if(typeof window !="undefined"){
-      localStorage.removeItem("user")
-    }
    }
   }
 })

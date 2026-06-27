@@ -1,6 +1,6 @@
 "use client";
-import {useEffect} from "react"
-import {motion} from "framer-motion"
+import {useEffect, useState} from "react"
+import {motion}from "framer-motion"
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {useDispatch,useSelector} from "react-redux"
@@ -10,15 +10,15 @@ import { logIn } from "@/store/router";
 import {LogIn} from "lucide-react"
 import AuthLayout from "@/components/authLayout";
 import Link from "next/link";
-import {useRouter} from "next/navigation"
-import {signIn,signOut,useSession} from "next-auth/react"
+import {useRouter}from "next/navigation"
+import {signIn,useSession}from "next-auth/react"
 import type{RootState} from "../../store/store"
 
 export default function SigninCard() {
- 
-    const {data:session} = useSession();
-    console.log(session);
-  
+ // adding status 
+    const {data:session, status} = useSession();
+    const [googleSyncPending, setGoogleSyncPending] = useState(false);
+
     const {isLogged} = useSelector((state:RootState)=>state.user)
     
     const dispatch = useDispatch();
@@ -42,48 +42,44 @@ export default function SigninCard() {
         mutationFn:async(payload:{name:string,email:string})=>{
             return await userQuery.googleSignin(payload)
         },
-       onSuccess: (res) => {
-    // res.data is the Axios response body: { message, token, data: userExist }
-    console.log("signin response", res.data);
-    
-    // Pass the actual user record (res.data.data) to your Redux action
-    const userData = res.data; 
-    
-    if (userData) {
-        dispatch(logIn(userData));
-        router.push("/");
-    } else {
-        console.error("User object is missing in backend response");
-    }
-},
-        onError:(error)=>{
-            console.log("error in signin",error.message)
+        onSuccess: (res) => {
+            console.log("signin response", res.data);
+            const userData = res.data;
+            if (userData) {
+                dispatch(logIn(userData));
+                router.push("/");
+            } else {
+                console.error("User object is missing in backend response");
+            }
+        },
+        onError: (error) => {
+            console.log("error in signin", error.message)
+            setGoogleSyncPending(false)
         }
- } ) 
+    })
 
- // 1. Force navigation the instant Redux marks the user as logged in
-useEffect(() => {
-  if (isLogged) {
-    router.push("/");
-    router.refresh(); // Forces Next.js to update server components layout data
-  }
-}, [isLogged, router]);
+    const googleSigninLoading = googleSigninMutation.status === "pending"
 
+    useEffect(() => {
+      if (isLogged) {
+        router.push("/");
+        return;
+      }
 
-useEffect(() => {
-// If Redux already says they are logged in, just send them home!
-  if(isLogged)return;
-
-    if (session?.user?.email && session?.user?.name) {
-      const payload = {
-        name: session.user.name,
-        email: session.user.email
-      };
-      
-      // Trigger the backend sync
-      googleSigninMutation.mutate(payload);
-    }
-  }, [session,isLogged]);
+      if (
+        status === "authenticated" &&
+        session?.user?.email &&
+        session?.user?.name &&
+        !googleSyncPending &&
+        !googleSigninLoading
+      ) {
+        setGoogleSyncPending(true)
+        googleSigninMutation.mutate({
+          name: session.user.name,
+          email: session.user.email,
+        })
+      }
+    }, [session, status, isLogged, googleSyncPending, googleSigninLoading, router])
 
     const handleSubmit = (e:React.FormEvent<HTMLFormElement>)=>{
         e.preventDefault();

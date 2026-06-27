@@ -70,20 +70,13 @@ export  const SigninUser =async(req,res)=>{
     }
 }
 
-export const SignoutUser = async(req,res)=>{
-    const {email } = req.body;
-    try{
-        // const deletedUser = await pool.query("DELETE FROM users WHERE email = $1",[email])
-
-        // deleting user via prisma
-        const deletedUser = await prisma.users.delete({email:email});
-
-        res.clearCookie("token")
-
-        return res.status(200).json({message:"the user is signed out"})
-    }catch(error){
-        return res.status(500).json({message:"internal server error",error:error.message})
-    }
+export const SignoutUser = async (req, res) => {
+  try {
+    res.clearCookie("token", getTokenConfig)
+    return res.status(200).json({ message: "user signed out" })
+  } catch (error) {
+    return res.status(500).json({ message: "internal server error", error: error.message })
+  }
 }
 
 // google sigin
