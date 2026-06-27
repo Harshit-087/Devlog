@@ -1,4 +1,5 @@
 import {axiosInstance} from "./axiosInstance"
+import axios from "axios"
 
 
 export const userQuery={
@@ -7,13 +8,14 @@ export const userQuery={
   },
   signinUser:async(payload:{email:string,password:string})=>{
         console.log("going to backend")
-    return await  axiosInstance.post("/user-api/v1/signin",payload)
+    return await  axios.post("/api/auth/signin",payload)
   },
   signoutUser: async () => {
     console.log("going to backend")
-    return await axiosInstance.post("/user-api/v1/signout")
+    return await axiosInstance.post("/api/auth/signout")
   },
   googleSignin:async(payload:{name:string,email:string})=>{
-    return await axiosInstance.post("/user-api/v1/googleSignin",payload)
+    return await axiosInstance.post("/api/auth/googl-signin",payload)
   }
+  
 }

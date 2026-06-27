@@ -44,6 +44,7 @@ export async function middleware(request: NextRequest) {
         response.cookies.delete("token") 
         return response
     }
+    
 }
 
 // Update your matcher to monitor your protected dashboards cleanly
