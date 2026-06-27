@@ -31,6 +31,7 @@ export default function SigninCard() {
         onSuccess:(res)=>{
             console.log("signin response",res.data)
             dispatch(logIn(res.data))
+            router.refresh();
             router.push("/")
         },
         onError:(error)=>{
@@ -47,6 +48,7 @@ export default function SigninCard() {
             const userData = res.data;
             if (userData) {
                 dispatch(logIn(userData));
+            router.refresh();
                 router.push("/");
             } else {
                 console.error("User object is missing in backend response");
@@ -62,6 +64,7 @@ export default function SigninCard() {
 
     useEffect(() => {
       if (isLogged) {
+            router.refresh();
         router.push("/");
         return;
       }
