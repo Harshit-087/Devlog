@@ -3,7 +3,7 @@ import {useEffect} from "react"
 import {motion} from "framer-motion"
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {useDispatch} from "react-redux"
+import {useDispatch,useSelector} from "react-redux"
 import {useMutation} from "@tanstack/react-query"
 import { userQuery } from "../api/userQuery";
 import { logIn } from "@/store/router";
@@ -12,12 +12,15 @@ import AuthLayout from "@/components/authLayout";
 import Link from "next/link";
 import {useRouter} from "next/navigation"
 import {signIn,signOut,useSession} from "next-auth/react"
+import {initialState} from "../../store/router"
 
 export default function SigninCard() {
  
     const {data:session} = useSession();
     console.log(session);
-
+  
+    const isLogged = useSelector((state:initialState)=>state.isLogged)
+    
     const dispatch = useDispatch();
     const router = useRouter()
     
@@ -36,7 +39,7 @@ export default function SigninCard() {
  } ) 
 
     const googleSigninMutation =useMutation({
-        mutationFn:async(payload:{email:string,name:string})=>{
+        mutationFn:async(payload:{name:string,email:string})=>{
             return await userQuery.googleSignin(payload)
         },
        onSuccess: (res) => {
@@ -60,6 +63,12 @@ export default function SigninCard() {
 
 
 useEffect(() => {
+// If Redux already says they are logged in, just send them home!
+  if(isLogged){
+    router.push("/")
+    return;
+  }
+
     if (session?.user?.email && session?.user?.name) {
       const payload = {
         name: session.user.name,
@@ -140,7 +149,7 @@ useEffect(() => {
            </form>
 
            <button
-      onClick={() => signIn("google")}
+      onClick={() => signIn("google", { redirect: false })}  //Prevents NextAuth from hijacking the page cycle
       className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
     >
       Sign In with Google
