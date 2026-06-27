@@ -12,10 +12,10 @@ export const userQuery={
   },
   signoutUser: async () => {
     console.log("going to backend")
-    return await axiosInstance.post("/api/auth/signout")
+    return await axios.post(`/api/auth/signout`)
   },
   googleSignin:async(payload:{name:string,email:string})=>{
-    return await axiosInstance.post("/api/auth/googl-signin",payload)
+    return await axios.post(`/api/auth/google-signin`,payload)
   }
   
 }
