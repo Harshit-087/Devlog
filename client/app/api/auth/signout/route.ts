@@ -7,5 +7,6 @@ export async function POST(request: Request) {
 
   const response = NextResponse.json({ message: "user signed out" })
   response.cookies.delete("token")
+  response.cookies.delete("next-auth.session-token")
   return response
 }

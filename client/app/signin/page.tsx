@@ -13,6 +13,7 @@ import Link from "next/link";
 import {useRouter}from "next/navigation"
 import {signIn,useSession}from "next-auth/react"
 import type{RootState} from "../../store/store"
+import GoogleSigninButton from "@/components/ui/google-button";
 
 export default function SigninCard() {
  // adding status 
@@ -63,13 +64,7 @@ export default function SigninCard() {
     const googleSigninLoading = googleSigninMutation.status === "pending"
 
     useEffect(() => {
-      if (isLogged) {
-            router.refresh();
-        router.push("/");
-        return;
-      }
-
-      if (
+       if (
         status === "authenticated" &&
         session?.user?.email &&
         session?.user?.name &&
@@ -81,8 +76,26 @@ export default function SigninCard() {
           name: session.user.name,
           email: session.user.email,
         })
+        return;
       }
+
+  if (isLogged) {
+    router.refresh();
+    router.push("/");
+    return;
+  }
+
+     
     }, [session, status, isLogged, googleSyncPending, googleSigninLoading, router])
+
+   // google signin click 
+    const handleGoogleSignin = async()=>{
+      const result = await signIn("google",{ callbackUrl: "/signin" })
+      console.log(result); // { error, status, ok, url }
+     if (result?.error) {
+  console.error("Google signin failed:", result.error);
+   }
+   }
 
     const handleSubmit = (e:React.FormEvent<HTMLFormElement>)=>{
         e.preventDefault();
@@ -152,12 +165,7 @@ export default function SigninCard() {
           )}
            </form>
 
-           <button
-      onClick={() => signIn("google", { redirect: false })}  //Prevents NextAuth from hijacking the page cycle
-      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-    >
-      Sign In with Google
-    </button>
+         <GoogleSigninButton submit={()=>handleGoogleSignin()}/>
 
            <p className="text-center text-sm text-slate-400">
         Don't have an account?{" "}

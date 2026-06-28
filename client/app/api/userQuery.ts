@@ -15,6 +15,7 @@ export const userQuery={
     return await axios.post(`/api/auth/signout`)
   },
   googleSignin:async(payload:{name:string,email:string})=>{
+    
     return await axios.post(`/api/auth/google-signin`,payload)
   }
   

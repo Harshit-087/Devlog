@@ -18,7 +18,7 @@ import { useSession, signOut } from "next-auth/react";
 export default function Home() {
   const [active, setActive] = useState("dashboard");
   const [open, setOpen] = useState<boolean>(false);
-  const { isLogged } = useSelector((state: { user: initialState }) => state.user)
+  const { isLogged,name } = useSelector((state: { user: initialState }) => state.user)
   const { data: session, status } = useSession()
 
   const dispatch = useDispatch()
@@ -29,6 +29,7 @@ export default function Home() {
     },
     onSuccess: (res) => {
       console.log("signout user", res.data.message)
+      window.location.reload()
       if (status === "authenticated") {
         signOut({ redirect: false })
       }
@@ -51,7 +52,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-                Welcome back 👋
+                Welcome back, {name}
               </h1>
               <p className="text-sm text-slate-400 mt-1">
                 Track learning, review progress, and improve daily.
@@ -98,6 +99,7 @@ export default function Home() {
                           className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-800 transition text-left"
                           onClick={() => {
                             signOutMutation.mutate()
+                            
                             console.log("logout");
                           }}
                         >
