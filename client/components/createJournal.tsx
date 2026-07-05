@@ -15,7 +15,7 @@ export default function CreateJournal() {
   const queryClient = useQueryClient();
 
   const createJournalMutation = useMutation({
-    mutationFn: async ({ payload, id }: { payload: { title: string; content: string }; id: string }) => {
+    mutationFn: async ({ payload, id }: { payload: { title: string, content: string }, id: string }) => {
       return await journalQuery.createJournal(payload, id);
     },
     onSuccess: (res) => {

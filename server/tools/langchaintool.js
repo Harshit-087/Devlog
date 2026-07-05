@@ -1,9 +1,9 @@
 import { tool } from "@langchain/core/tools";
-import { getLastWeekJournal } from "./journalTool.js";
+import { getRecentJournal } from "./journalTool.js";
 
 export const journalTool = tool(
   async ({ userId }) => {
-    const data = await getLastWeekJournal(userId);
+    const data = await getRecentJournal(userId);
     return JSON.stringify(data);
   },
   {

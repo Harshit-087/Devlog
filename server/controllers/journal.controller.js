@@ -41,7 +41,8 @@ export const fetchJournal = async(req,res)=>{
         // const myJournal = await pool.query("SELECT * FROM journals WHERE user_id=($1) ORDER BY created_at DESC",[id])
 
        // using prisma
-       const myJournal = await prisma.journals.findMany({where:{user_id:Number(id)}})
+       const myJournal = await prisma.journals.findMany({where:{user_id:Number(id)},orderBy:{created_at:'desc'}})
+       console.log("myJournal",myJournal)
 
        // set in cache
        await setCache(key,myJournal,600)

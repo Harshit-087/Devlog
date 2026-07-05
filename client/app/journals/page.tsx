@@ -43,11 +43,7 @@ export default function Journal() {
   });
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col min-h-screen overflow-hidden"
-    >
+ <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col min-h-screen">
       <div className="space-y-8 pb-10">
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -55,7 +51,7 @@ export default function Journal() {
             <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent mb-1">Your Journals</h2>
             <p className="text-sm text-slate-400">Track your learning journey one entry at a time</p>
           </div>
-          <CreateJournal />
+          <CreateJournal/>
         </div>
 
         {/* Search Bar */}
@@ -71,11 +67,12 @@ export default function Journal() {
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
           {journals.map((log: Log, i: number) => (
             <Card
-              key={i}
-              onClick={() => setSelectedLog(log)}
-              className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 rounded-2xl cursor-pointer hover:border-indigo-500/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+  key={log.id ?? i}
+  onClick={() => setSelectedLog(log)}
+  className="group relative bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 rounded-2xl cursor-pointer hover:border-indigo-500/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+>
+  <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+            
               <CardContent className="p-6 relative space-y-3">
                 {/* Left Accent */}
                 <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-indigo-500 via-violet-500 to-pink-500 group-hover:w-1.5 transition-all" />

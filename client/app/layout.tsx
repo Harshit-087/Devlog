@@ -25,6 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
+    // data-theme="cerberus"
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} min-h-screen antialiased`}
     >

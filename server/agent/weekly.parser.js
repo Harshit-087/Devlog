@@ -6,14 +6,11 @@ const weeklySchema = z.object({
   summary: z.string(),
   skills: z.array(z.string()),
   gaps: z.array(z.string()),
-  recommendation: z.array(z.string()),
+  recommendations: z.array(z.string()),
+  topics: z.array(z.object({
+    name: z.string(),
+    score: z.number()
+  }))
 });
 
-
-const dashboardSchema = z.object({
-  focus:z.array(z.string()),
-  progress:z.string()
-})
-
-export const dashboardParser = StructuredOutputParser.fromZodSchema(dashboardSchema)
 export const weeklyParser = StructuredOutputParser.fromZodSchema(weeklySchema);

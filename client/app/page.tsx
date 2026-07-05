@@ -23,22 +23,27 @@ export default function Home() {
 
   const dispatch = useDispatch()
 
-  const signOutMutation = useMutation({
-    mutationFn: async () => {
-      return await userQuery.signoutUser()
-    },
-    onSuccess: (res) => {
-      console.log("signout user", res.data.message)
-      window.location.reload()
-      if (status === "authenticated") {
-        signOut({ redirect: false })
-      }
-      dispatch(SignOut())
-    },
-    onError:(error)=>{
-      console.log("error in signing out ",error.message)
+const signOutMutation = useMutation({
+  mutationFn: async () => {
+    return await userQuery.signoutUser()
+  },
+  onSuccess: async (res) => {
+    // 1. Clear your local Redux state first
+    dispatch(SignOut())
+
+    // 2. If NextAuth is authenticated, handle its signout completely
+    if (status === "authenticated") {
+      // Awaiting ensures NextAuth completely clears cookies/session before moving on
+      await signOut({ redirect: false })
     }
-  })
+    
+    // 3. Finally, reload or redirect once everything is cleared
+    window.location.reload()
+  },
+  onError: (error) => {
+    console.log("error in signing out ", error.message)
+  }
+})
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
@@ -99,8 +104,6 @@ export default function Home() {
                           className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-800 transition text-left"
                           onClick={() => {
                             signOutMutation.mutate()
-                            
-                            console.log("logout");
                           }}
                         >
                           <LogOut className="w-4 h-4" />

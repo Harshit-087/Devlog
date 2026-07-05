@@ -30,7 +30,7 @@ export default function SigninCard() {
             return await userQuery.signinUser(payload)
         },
         onSuccess:(res)=>{
-            console.log("signin response",res.data)
+          
             dispatch(logIn(res.data))
             router.refresh();
             router.push("/")
@@ -45,7 +45,7 @@ export default function SigninCard() {
             return await userQuery.googleSignin(payload)
         },
         onSuccess: (res) => {
-            console.log("signin response", res.data);
+            
             const userData = res.data;
             if (userData) {
                 dispatch(logIn(userData));

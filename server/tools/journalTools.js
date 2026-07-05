@@ -1,6 +1,6 @@
 import {prisma} from "../config/connection.js"
 
-export async function getLastWeekJournal(userId,days) {
+export async function getRecentJournal(userId,days) {
 //   const query = `
 //     SELECT content, created_at
 //     FROM journals
@@ -20,6 +20,6 @@ export async function getLastWeekJournal(userId,days) {
       created_at: 'desc'
     }
   });
-  console.log("tool",result)
+  
   return result;
 }

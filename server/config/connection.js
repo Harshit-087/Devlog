@@ -17,7 +17,7 @@ import { Redis } from 'ioredis'
    // 3. Pass the adapter to the constructor
    // This satisfies the "requires either adapter or accelerateUrl" check!
    const prisma = new PrismaClient({ adapter });
-
+  console.log("Prisma models available:", Object.keys(prisma).filter(k => !k.startsWith('_') && !k.startsWith('$')));
 
 const redis = new Redis(
   process.env.REDIS_URL,
